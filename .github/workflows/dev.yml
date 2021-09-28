@@ -8,7 +8,7 @@ name: Blog CI/CD
 on:
   workflow_dispatch:
 #  schedule:
-    # * is a special character in YAML so you have to quote this string
+# * is a special character in YAML so you have to quote this string
 #    - cron:  '*/5 * * * *'
 
 #env:
