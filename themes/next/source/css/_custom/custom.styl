@@ -1,0 +1,190 @@
+// Custom styles.
+//设置内容的背景颜色
+
+/*.main-inner {
+    border-radius: 5px;
+    background: rgba(255,255,255,.5);
+
+}*/
+
+// 主页文章添加阴影效果
+.post {
+margin-top: 60px;
+margin-bottom: 60px;
+padding: 25px;
+//background: rgba(255,255,255,.8);
+//border-radius: 5px;
+-webkit-box-shadow: 0 0 5px rgba(202, 203, 203, .5);
+-moz-box-shadow: 0 0 5px rgba(202, 203, 204, .5);
+}
+
+// Custom styles.
+code {
+    color: #ff7600;
+    background: #fbf7f8;
+    margin: 2px;
+}
+// 大代码块的自定义样式
+.highlight, pre {
+    margin: 5px 0;
+    padding: 5px;
+	//color: #55bc6b;
+    //border-radius: 3px;
+}
+.highlight, code, pre {
+    border: 1px solid #d6d6d6;
+}
+
+//代码块复制按钮
+.highlight{
+  //方便copy代码按钮（btn-copy）的定位
+  position: relative;
+}
+.btn-copy {
+    display: inline-block;
+    cursor: pointer;
+    background-color: #eee;
+    background-image: linear-gradient(#fcfcfc,#eee);
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #333;
+    -webkit-transition: opacity .3s ease-in-out;
+    -o-transition: opacity .3s ease-in-out;
+    transition: opacity .3s ease-in-out;
+    padding: 2px 6px;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    opacity: 0;
+}
+.btn-copy span {
+    margin-left: 5px;
+}
+.highlight:hover .btn-copy{
+  opacity: 1;
+}
+
+
+/* 自定义页脚跳动的心样式 */
+@keyframes heartAnimate {
+    0%,100%{transform:scale(1);}
+    10%,30%{transform:scale(0.9);}
+    20%,40%,60%,80%{transform:scale(1.1);}
+    50%,70%{transform:scale(1.1);}
+}
+#heart {
+    animation: heartAnimate 1.33s ease-in-out infinite;
+}
+.with-love {
+    color: #257efa
+}
+
+
+/* 自定义的页脚微信订阅号样式 */
+.weixin-box {
+    position: absolute;
+    bottom: 53px;
+    left: 205px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);
+}
+.weixin-menu {
+    position: relative;
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+    background: url(/images/wechat.svg);
+    background-size: 24px 24px;
+}
+.weixin-hover {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 0px;
+    width: 0px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);
+    background: url(/images/wechat.svg);
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-size: 150px 150px;
+    transition: all 0.35s ease-in-out;
+    z-index: 1024;
+    opacity: 0;
+}
+.weixin-menu:hover .weixin-hover {
+    bottom: 24px;
+    left: 24px;
+    height: 170px;
+    width: 150px;
+    opacity: 1;
+}
+.weixin-description {
+    opacity: 0;
+    position: absolute;
+    bottom: 3%;
+    left: 5%;
+    right: 5%;
+    font-size: 12px;
+    transition: all 0.35s cubic-bezier(1, 0, 0, 1);
+}
+.weixin-menu:hover .weixin-description {
+    opacity: 1;
+}
+
+
+
+
+/* 自定义的文章摘要图片样式 */
+img.img-topic {
+    width: 100%;
+}
+
+/* 自定义的文章置顶样式 */
+.post-sticky-flag {
+    font-size: inherit;
+    float: left;
+    color: #fc6423;
+	margin-right: 10px
+    cursor: help;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+}
+.post-sticky-flag:hover {
+    color: #07b39b;
+}
+
+
+
+/* 背景图片 */
+/*
+body::before {
+    background-image: url(/images/bg/3.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    content: " ";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+*/
+
+/*设置top的样式*/
+/*
+#top{
+margin-left: 15%;
+}
+*/
