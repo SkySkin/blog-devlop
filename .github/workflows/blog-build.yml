@@ -1,4 +1,4 @@
-name: Blog CI/CD
+name: Blog Build
 
 # 触发条件：在 push 到 myblog 分支后触发
 #on: push
