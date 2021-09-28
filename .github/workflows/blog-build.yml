@@ -1,0 +1,136 @@
+name: Blog CI/CD
+
+# 触发条件：在 push 到 myblog 分支后触发
+#on: push
+#on:
+#  issues:
+#    types: [opened, reopened]
+on:
+  workflow_dispatch:
+#  schedule:
+    # * is a special character in YAML so you have to quote this string
+#    - cron:  '*/5 * * * *'
+
+#env:
+#  TZ: Asia/Shanghai
+
+jobs:
+  time-judge:
+    name: judge gitee and github version & build
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 系统作为编译部署的环境
+
+    steps:
+    - name: Checkout codes
+      uses: actions/checkout@v2
+
+    - name: Compare GitCommitIimeGithub And GitCommitIimeGitee
+      run: |
+        pwd
+        #得到github项目对应的最后提交时间
+        gitCommitIimeGithub=$(date --date="$(git show --pretty=format:"%ci" | head -1)" "+%Y-%m-%d %H:%M:%S")
+        echo '得到github项目对应的最后提交时间[gitCommitIimeGithub]='${gitCommitIimeGithub}       
+
+        #得到github项目对应的最后提交时间秒数
+        gitHUBCommit_seconds=$(date --date="${gitCommitIimeGithub}" +%s)   
+        echo '得到github项目对应的最后提交时间秒数[gitHUBCommit_seconds]='${gitHUBCommit_seconds}
+
+        #创建临时文件拉取gitee
+        echo '创建临时文件拉取gitee'
+        mkdir tempCloneDir
+        cd ./tempCloneDir/
+        pwd
+        #git clone  https://gitee.com/skyskin-w/Test.git #gitee仓库地址
+        git clone -b myblog https://gitee.com/skyskin-w/skyskin-w.gitee.io.git
+        cd ./skyskin-w.gitee.io/
+
+        #得到gitee项目对应的最后提交时间
+        gitCommitIimeGitee=$(date --date="$(git show --pretty=format:"%ci" | head -1)" "+%Y-%m-%d %H:%M:%S")
+        echo '得到gitee项目对应的最后提交时间[gitCommitIimeGitee]='${gitCommitIimeGitee}
+
+        #得到gitee项目对应的最后提交时间秒数
+        gitEECommit_seconds=$(date --date="${gitCommitIimeGitee}" +%s)
+        echo '得到gitee项目对应的最后提交时间秒数[gitEECommit_seconds]='${gitEECommit_seconds}
+      
+        #得到 (github提交时间 -  gitee提交时间)
+        GITHUB_GITEE="$((gitHUBCommit_seconds-gitEECommit_seconds))"
+        echo '得到 (github提交时间 -  gitee提交时间)[GITHUB_GITEE]='${GITHUB_GITEE}
+        echo "GITHUB_GITEE_TIME="${GITHUB_GITEE} >> $GITHUB_ENV
+      #判断，如果小于0，则gitee版本要高，需要进行吧gitee的代码hexo进行编译，然后提交，然后再通过第三方库Yikun/gitee-mirror-action@v0.01，
+      #把gitee代码仓库同步到github
+    - name: Setup node
+      # 设置 node.js 环境
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Cache node modules
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      # 设置包缓存目录，避免每次下载
+      uses: actions/cache@v1
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install hexo dependencies
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      # 下载 hexo-cli 脚手架及相关安装包
+      run: |
+        cd ./tempCloneDir/skyskin-w.gitee.io/
+        npm install -g hexo-cli
+        npm install
+
+    - name: Generate files
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      # 编译 markdown 文件
+      run: |
+        cd ./tempCloneDir/skyskin-w.gitee.io/
+        hexo clean
+        hexo generate
+
+    - name: Deploy hexo blog
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      env: 
+        # Github 仓库
+        #GITHUB_REPO: github.com/SkySkin-w/skyskin-w.github.io
+        # Coding 仓库
+        #CODING_REPO: e.coding.net/yifanzheng/blogs.git
+        # Gitee 仓库
+        GITEE_REPO: gitee.com/skyskin-w/skyskin-w.gitee.io
+      # 将编译后的博客文件推送到指定仓库
+      run: |
+        cd ./tempCloneDir/skyskin-w.gitee.io/
+        cd ./public && git init && git add .
+        git config user.name "zeyue"
+        git config user.email "735600779@qq.com"
+        git add .
+        git commit -m "GitHub Actions Auto Builder at $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
+        git push --force --quiet "https://skyskin-w:${{ secrets.GITEE_TOKEN }}@$GITEE_REPO" master:master
+#        git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_REPO" master:master
+#        git push --force --quiet "https://SkySkin-w:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
+        
+    - name: Mirror the Github organization repos to Gitee.
+      if: ${{env.GITHUB_GITEE_TIME < 0}}
+      uses: Yikun/gitee-mirror-action@v0.01
+      #代表我们用的仓库，不用同步
+      with:
+        # 必选，需要同步的Github用户（源）
+        dst: github/SkySkin-w
+        # 必选，需要同步到的Gitee的用户（目的）
+        src: gitee/skyskin-w
+        # 必选，Gitee公钥对应的私钥，https://gitee.com/profile/sshkeys,我这里是github的
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        # 必选，Gitee对应的用于创建仓库的token，https://gitee.com/profile/personal_access_tokens,我这里是github的
+        dst_token:  ${{ secrets.ACCESS_TOKEN }}
+        # 如果是组织，指定组织即可，默认为用户user
+        # account_type: org
+        # 还有黑、白名单，静态名单机制，可以用于更新某些指定库
+        static_list: "skyskin-w.gitee.io"
+        # black_list: 'repo_name,repo_name2'
+        white_list: 'skyskin-w.gitee.io'
+        mappings: 'skyskin-w.gitee.io=>skyskin-w.github.io'
+
+
+
+
+
