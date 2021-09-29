@@ -1,24 +1,15 @@
-name: Blog Build
-
-# 触发条件：在 push 到 myblog 分支后触发
-#on: push
-#on:
-#  issues:
-#    types: [opened, reopened]
+name: Blog Build on schedule
 on:
-  workflow_dispatch:
-#  schedule:
-    # * is a special character in YAML so you have to quote this string
-#    - cron:  '*/5 * * * *'
+  schedule:
+    - cron:  '*/5 * * * *' # 定时任务，每5分钟执行一次，PS：git action 的定时任务可能会有十几分钟甚至超过一小时的延迟。
 
-#env:
-#  TZ: Asia/Shanghai
+
+
 
 jobs:
-  time-judge:
-    name: judge gitee and github version & build
+  blog-build-schedule:
+    name: blog-build-schedule-job
     runs-on: ubuntu-latest # 使用最新的 Ubuntu 系统作为编译部署的环境
-
     steps:
     - name: Checkout codes
       uses: actions/checkout@v2
@@ -39,9 +30,8 @@ jobs:
         mkdir tempCloneDir
         cd ./tempCloneDir/
         pwd
-        #git clone  https://gitee.com/skyskin-w/Test.git #gitee仓库地址
-        git clone -b myblog https://gitee.com/skyskin-w/skyskin-w.gitee.io.git
-        cd ./skyskin-w.gitee.io/
+        git clone https://gitee.com/skyskin-w/blog-devlop.git #gitee blog-仓库地址
+        cd ./blog-devlop/
 
         #得到gitee项目对应的最后提交时间
         gitCommitIimeGitee=$(date --date="$(git show --pretty=format:"%ci" | head -1)" "+%Y-%m-%d %H:%M:%S")
@@ -76,7 +66,7 @@ jobs:
       if: ${{env.GITHUB_GITEE_TIME < 0}}
       # 下载 hexo-cli 脚手架及相关安装包
       run: |
-        cd ./tempCloneDir/skyskin-w.gitee.io/
+        cd ./tempCloneDir/blog-devlop/
         npm install -g hexo-cli
         npm install
 
@@ -84,53 +74,37 @@ jobs:
       if: ${{env.GITHUB_GITEE_TIME < 0}}
       # 编译 markdown 文件
       run: |
-        cd ./tempCloneDir/skyskin-w.gitee.io/
+        cd ./tempCloneDir/blog-devlop/
         hexo clean
         hexo generate
 
     - name: Deploy hexo blog
       if: ${{env.GITHUB_GITEE_TIME < 0}}
       env: 
-        # Github 仓库
-        #GITHUB_REPO: github.com/SkySkin-w/skyskin-w.github.io
+        # Github dev仓库
+        GITHUB_DEV_REPO: github.com/SkySkin-w/blog-devlop.git
+        # Github blog展示仓库
+        GITHUB_REPO: github.com/SkySkin-w/skyskin-w.github.io.git
         # Coding 仓库
         #CODING_REPO: e.coding.net/yifanzheng/blogs.git
-        # Gitee 仓库
-        GITEE_REPO: gitee.com/skyskin-w/skyskin-w.gitee.io
+        # Gitee blog展示仓库
+        GITEE_REPO: gitee.com/skyskin-w/skyskin-w.gitee.io.git
       # 将编译后的博客文件推送到指定仓库
       run: |
-        cd ./tempCloneDir/skyskin-w.gitee.io/
+        cd ./tempCloneDir/blog-devlop/
         cd ./public && git init && git add .
         git config user.name "zeyue"
         git config user.email "735600779@qq.com"
         git add .
         git commit -m "GitHub Actions Auto Builder at $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
         git push --force --quiet "https://skyskin-w:${{ secrets.GITEE_TOKEN }}@$GITEE_REPO" master:master
-#        git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_REPO" master:master
-#        git push --force --quiet "https://SkySkin-w:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
+        git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_REPO" master:master
         
-    - name: Mirror the Github organization repos to Gitee.
-      if: ${{env.GITHUB_GITEE_TIME < 0}}
-      uses: Yikun/gitee-mirror-action@v0.01
-      #代表我们用的仓库，不用同步
-      with:
-        # 必选，需要同步的Github用户（源）
-        dst: github/SkySkin-w
-        # 必选，需要同步到的Gitee的用户（目的）
-        src: gitee/skyskin-w
-        # 必选，Gitee公钥对应的私钥，https://gitee.com/profile/sshkeys,我这里是github的
-        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-        # 必选，Gitee对应的用于创建仓库的token，https://gitee.com/profile/personal_access_tokens,我这里是github的
-        dst_token:  ${{ secrets.ACCESS_TOKEN }}
-        # 如果是组织，指定组织即可，默认为用户user
-        # account_type: org
-        # 还有黑、白名单，静态名单机制，可以用于更新某些指定库
-        static_list: "skyskin-w.gitee.io"
-        # black_list: 'repo_name,repo_name2'
-        white_list: 'skyskin-w.gitee.io'
-        mappings: 'skyskin-w.gitee.io=>skyskin-w.github.io'
-
-
+        #将当前的blog-dev推送至github,使得4个仓库两两一致，达到目的
+        rm -rf ./.git
+        cd ..
+        git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_DEV_REPO" master:master
+#        git push --force --quiet "https://SkySkin-w:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
 
 
 
