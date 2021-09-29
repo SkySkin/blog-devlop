@@ -102,7 +102,8 @@ jobs:
         
         #将当前的blog-dev推送至github,使得4个仓库两两一致，达到目的
         rm -rf ./.git
-        cd ..
+        git clone -b master https://github.com/SkySkin-w/blog-devlop.git ./github-blog-dev
+        cd ./github-blog-dev
         git push --force --quiet "https://skyskin-w:${{ secrets.GITEE_TOKEN }}@$GITHEE_DEV_REPO" master:master
 #        git push --force --quiet "https://SkySkin-w:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
 
