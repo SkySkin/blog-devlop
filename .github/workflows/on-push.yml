@@ -1,15 +1,14 @@
-name: Blog Build on started
+name: Blog Build on push
 on:
-  watch:
-    types: started #star时触发
+  push: #提交时触发
 
 
 
 
 jobs:
-  #触发类型为started时进行触发
-  blog-build-started:
-    name: blog-build-started-job
+  #触发类型为push时进行触发
+  blog-build-push:
+    name: blog-build-push-job
     runs-on: ubuntu-latest # 使用最新的 Ubuntu 系统作为编译部署的环境
     steps:
     - name: Checkout codes
