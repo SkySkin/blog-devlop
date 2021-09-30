@@ -30,7 +30,7 @@ jobs:
         mkdir tempCloneDir
         cd ./tempCloneDir/
         pwd
-        git clone https://gitee.com/skyskin-w/blog-devlop.git #gitee blog-仓库地址
+        git clone https://gitee.com/skyskin/blog-devlop.git #gitee blog-仓库地址
         cd ./blog-devlop/
 
         #得到gitee项目对应的最后提交时间
@@ -82,29 +82,29 @@ jobs:
       if: ${{env.GITHUB_GITEE_TIME < 0}}
       env: 
         # Github dev仓库
-        GITHUB_DEV_REPO: github.com/SkySkin-w/blog-devlop.git
+        GITHUB_DEV_REPO: github.com/SkySkin/blog-devlop.git
         # Github blog展示仓库
-        GITHUB_REPO: github.com/SkySkin-w/skyskin-w.github.io.git
+        GITHUB_REPO: github.com/SkySkin/skyskin.github.io.git
         # Coding 仓库
         #CODING_REPO: e.coding.net/yifanzheng/blogs.git
         # Gitee blog展示仓库
-        GITEE_REPO: gitee.com/skyskin-w/skyskin-w.gitee.io.git
+        GITEE_REPO: gitee.com/skyskin/skyskin.git
       # 将编译后的博客文件推送到指定仓库
       run: |
         cd ./tempCloneDir/blog-devlop/
         cd ./public && git init && git add .
         git config user.name "zeyue"
-        git config user.email "735600779@qq.com"
+        git config user.email "981484060@qq.com"
         git add .
         git commit -m "GitHub Actions Auto Builder at $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
-        git push --force --quiet "https://skyskin-w:${{ secrets.GITEE_TOKEN }}@$GITEE_REPO" master:master
+        git push --force --quiet "https://skyskin:${{ secrets.GITEE_TOKEN }}@$GITEE_REPO" master:master
         git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_REPO" master:master
         
         #将当前的blog-dev推送至github,使得4个仓库两两一致，达到目的
         rm -rf ./.git
         cd ..
         git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_DEV_REPO" master:master
-#        git push --force --quiet "https://SkySkin-w:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
+#        git push --force --quiet "https://SkySkin:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
 
 
 
