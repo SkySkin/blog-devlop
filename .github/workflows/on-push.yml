@@ -32,6 +32,7 @@ jobs:
         pwd
         git clone https://gitee.com/skyskin/blog-devlop.git #gitee blog-仓库地址
         git config --global http.postBuffer 1024M
+        git config --add core.compression
         cd ./blog-devlop/
 
         #得到gitee项目对应的最后提交时间
