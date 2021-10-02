@@ -1,6 +1,6 @@
 name: Blog Build on push 
 on:
-  push: #提交时触发
+  push: #提交时触发 
 
 
 
