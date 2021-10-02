@@ -1,4 +1,4 @@
-name: Blog Build on push 
+name: Blog Build on push   
 on:
   push: #提交时触发 
 
