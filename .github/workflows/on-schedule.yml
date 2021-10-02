@@ -108,7 +108,7 @@ jobs:
 #        git push --force --quiet "https://SkySkin:${{ secrets.CODING_TOKEN }}@$CODING_REPO" master:master
     - name: Build Gitee Pages
       if: ${{env.GITHUB_GITEE_TIME < 0}}
-      uses: yanglbme/gitee-pages-action@master
+      uses: yanglbme/gitee-pages-action@v1.3.2
       with:
        # 注意替换为你的 Gitee 用户名
        gitee-username: skyskin
