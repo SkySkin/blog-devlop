@@ -1,6 +1,6 @@
 ---
 title: C语言之printf()函数的参数与占位符
-date: 2011-10-15
+date: 2021-10-15
 tags:
 - C语言
 - printf()
