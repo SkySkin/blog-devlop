@@ -1,7 +1,7 @@
 ---
 title: C语言之printf()函数的参数与占位符
 date: 2021-10-15
-update:2021-10-19
+updated: 2021-10-19
 tags:
 - C语言
 - printf()
