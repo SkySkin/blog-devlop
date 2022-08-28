@@ -1,7 +1,7 @@
 name: Blog Build on schedule
 on:
   schedule:
-    - cron:  '*/5 * * * *' # 定时任务，每5分钟执行一次，PS：git action 的定时任务可能会有十几分钟甚至超过一小时的延迟。
+    - cron:  '*/30 * * * *' # 定时任务，每30分钟执行一次，PS：git action 的定时任务可能会有十几分钟甚至超过一小时的延迟。
 
 
 
